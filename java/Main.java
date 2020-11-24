@@ -11,7 +11,7 @@ public class Main extends Application {
    @Override 
    public void start(Stage stage) throws FileNotFoundException {
       //Cria um objeto imagem dessa forma 
-      Image image = new Image(new FileInputStream("images\\tabuleiro.jfif"));
+      Image image = new Image(new FileInputStream("..\\images\\tabuleiro.jfif"));
 
       //Setting the image view 
       ImageView imageView = new ImageView(image); 
