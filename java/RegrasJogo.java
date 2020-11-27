@@ -54,7 +54,7 @@ public class RegrasJogo {
                 return -1;
             if(movimento[1] > 1 || movimento[1] < -1) // andou mais que uma casa para o lado
                 return -1;
-            if(movimento[0] == 2 && peca[0] != 2) // andou duas casas para frente após a primeira jogada
+            if(movimento[0] == 2 && peca[0] != 1) // andou duas casas para frente após a primeira jogada
                 return -1;
             if(movimento[0] == 2 && movimento[1] != 0) // andou duas casas para frente e tambem uma para o lado
                 return -1;
