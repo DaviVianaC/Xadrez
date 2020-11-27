@@ -4,9 +4,13 @@ import java.io.IOException;
 public class Interface {
     private RegrasJogo jogo = new RegrasJogo();
     private Scanner sc = new Scanner(System.in);
+    private int erro = 0;
     public void iniciar(){
         System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
         desenharTabuleiro();
+        if(erro == -1){
+            System.out.println("\ncomando invalido");
+        }
         System.out.println("\ndigite a cordenada da peca (y,x)\n Ex: 61");
         System.out.print("> ");
         String p = sc.next();
@@ -18,8 +22,8 @@ public class Interface {
         int xm = sc.nextInt();
         int[] peca = {Integer.parseInt(p.substring(0,1)),Integer.parseInt(p.substring(1,2))};
         int[] movimento = {ym,xm};
-        jogo.movimentarPeca(peca, movimento);
-
+        erro = jogo.movimentarPeca(peca, movimento);
+        
         iniciar(); // a interface não vai ser recursiva, é so um teste
     }
     public void desenharTabuleiro(){
