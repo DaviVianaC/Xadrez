@@ -67,6 +67,7 @@ public class RegrasJogo {
 
             tabuleiro[resultante[0]][resultante[1]] = 'P';
             tabuleiro[peca[0]][peca[1]] = ' ';
+            return 0;
         }
         return -1;
     }
