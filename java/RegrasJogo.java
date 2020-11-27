@@ -2,10 +2,10 @@ public class RegrasJogo {
 
     private char[][] tabuleiro = {{'T', 'C', 'B', 'A', 'R', 'B', 'C', 'T'},
                                   {'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'},
-                                  {' ', ' ', ' ', ' ',' ', ' ', ' ', ' '},
-                                  {' ', ' ', ' ', ' ',' ', ' ', ' ', ' '},
-                                  {' ', ' ', ' ', ' ',' ', ' ', ' ', ' '},
-                                  {' ', ' ', ' ', ' ',' ', ' ', ' ', ' '},
+                                  {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+                                  {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+                                  {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+                                  {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
                                   {'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'},
                                   {'t', 'c', 'b', 'a', 'r', 'b', 'c', 't'}};
 
@@ -17,7 +17,7 @@ public class RegrasJogo {
         if(tabuleiro[peca[0]][peca[1]] == 'p' || tabuleiro[peca[0]][peca[1]] == 'P'){
             // posição em que a peça irá se encontrar apos o movimento
             int[] resultante = {peca[0] + movimento[0], peca[1] + movimento[1]};
-            
+
             // regras iguais para ambos os lados
             if(resultante[0] > 7 || resultante[0] < 0 || resultante[1] > 7 || resultante[1] < 0 ) // fora dos limites
                 return -1;
