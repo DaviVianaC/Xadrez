@@ -42,7 +42,7 @@ public class RegrasJogo {
                     return -1;
                 if(movimento[1] == 0 && movimento[0] == -2 && tabuleiro[resultante[0]+1][resultante[1]] != ' ') // andou duas casas para frente com a casa intermediaria ocupada
                     return -1;
-                if(tabuleiro[resultante[0]][resultante[1]] < 96 && tabuleiro[resultante[0]][resultante[1]] != 32) // tentou matar um aliado
+                if(tabuleiro[resultante[0]][resultante[1]] > 90) // tentou matar um aliado
                     return -1;
 
                 tabuleiro[resultante[0]][resultante[1]] = 'p';
@@ -59,9 +59,9 @@ public class RegrasJogo {
                     return -1;
                 if(movimento[1] == 0 && movimento[0] == 2 && tabuleiro[resultante[0]-1][resultante[1]] != ' ') // andou duas casas para frente com a casa intermediaria ocupada
                     return -1;
-                if(tabuleiro[resultante[0]][resultante[1]] > 90) // tentou matar um aliado
+                if(tabuleiro[resultante[0]][resultante[1]] < 96 && tabuleiro[resultante[0]][resultante[1]] != 32) // tentou matar um aliado
                     return -1;
-
+                    
                 tabuleiro[resultante[0]][resultante[1]] = 'P';
                 tabuleiro[peca[0]][peca[1]] = ' ';
             }
