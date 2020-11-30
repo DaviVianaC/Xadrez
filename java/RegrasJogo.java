@@ -73,6 +73,20 @@ public class RegrasJogo {
                     return 0;
                 }
                 break;
+			case 'c':
+                if(movimentoPermitido(peca, movimento)){
+                    tabuleiro[resultante[0]][resultante[1]] = 'c';
+                    tabuleiro[peca[0]][peca[1]] = ' ';
+                    return 0;
+                }
+                break;
+            case 'C':
+                if(movimentoPermitido(peca, movimento)){
+                    tabuleiro[resultante[0]][resultante[1]] = 'C';
+                    tabuleiro[peca[0]][peca[1]] = ' ';
+                    return 0;
+                }
+                break;
         }
         return -1;
     }
@@ -226,10 +240,18 @@ public class RegrasJogo {
             }else {
                 return false;
             }
+			
 
             return true;
         }
-
+		 //regras do cavalo
+		if(tabuleiro[peca[0]][peca[1]] == 'c' || tabuleiro[peca[0]][peca[1]] == 'C'){
+			if((resultante[0]==peca[0]+2 && resultante[1]==peca[1]+1 )||(resultante[0]==peca[0]+2 && resultante[1]==peca[1]-1 ) || (resultante[0]==peca[0]-2 && resultante[1]==peca[1]+1 ) || (resultante[0]==peca[0]-2 && resultante[1]==peca[1]-1) || (resultante[0]==peca[0]-1 && resultante[1]==peca[1]+2 ) || (resultante[0]==peca[0]+1 && resultante[1]==peca[1]-2 ) || (resultante[0]==peca[0]+1 && resultante[1]==peca[1]+2 )|| (resultante[0]==peca[0]-1 && resultante[1]==peca[1]-2 )){
+				return true;	
+			}
+			return false;				
+		}
+	
         
         return false;
     }
