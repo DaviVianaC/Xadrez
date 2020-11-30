@@ -45,6 +45,34 @@ public class RegrasJogo {
                     return 0;
                 }
                 break;
+            case 'a':
+                if(movimentoPermitido(peca, movimento)){
+                    tabuleiro[resultante[0]][resultante[1]] = 'a';
+                    tabuleiro[peca[0]][peca[1]] = ' ';
+                    return 0;
+                }
+                break;
+            case 'A':
+                if(movimentoPermitido(peca, movimento)){
+                    tabuleiro[resultante[0]][resultante[1]] = 'A';
+                    tabuleiro[peca[0]][peca[1]] = ' ';
+                    return 0;
+                }
+                break;
+            case 't':
+                if(movimentoPermitido(peca, movimento)){
+                    tabuleiro[resultante[0]][resultante[1]] = 't';
+                    tabuleiro[peca[0]][peca[1]] = ' ';
+                    return 0;
+                }
+                break;
+            case 'T':
+                if(movimentoPermitido(peca, movimento)){
+                    tabuleiro[resultante[0]][resultante[1]] = 'T';
+                    tabuleiro[peca[0]][peca[1]] = ' ';
+                    return 0;
+                }
+                break;
         }
         return -1;
     }
@@ -52,16 +80,20 @@ public class RegrasJogo {
 
     public boolean movimentoPermitido(int[] peca, int[] movimento) {
         int[] resultante = {peca[0] + movimento[0], peca[1] + movimento[1]};
+
         // regras iguais para todas as peças
+        if(movimento[0] == 0 && movimento[1] == 0) // não andou
+            return false;
         if(resultante[0] > 7 || resultante[0] < 0 || resultante[1] > 7 || resultante[1] < 0 ) // fora dos limites
-                return false;
-        if(tabuleiro[peca[0]][peca[1]] > 90){ // tentou matar um aliado branco
+            return false;
+        if(tabuleiro[peca[0]][peca[1]] > 90) { // tentou matar um aliado branco
             if(tabuleiro[resultante[0]][resultante[1]] > 90)
                 return false;
-        }else                                 // tentou matar um aliado preto
+        }else {                                 // tentou matar um aliado preto
             if(tabuleiro[resultante[0]][resultante[1]] < 97 && tabuleiro[resultante[0]][resultante[1]] != 32)
                 return false;
-
+        }
+        
         // regras do peão
         if(tabuleiro[peca[0]][peca[1]] == 'p' || tabuleiro[peca[0]][peca[1]] == 'P') {
             // regras iguais para ambos os lados
@@ -123,6 +155,78 @@ public class RegrasJogo {
                     return false;
             }
             
+            return true;
+        }
+        
+        // regras da torre
+        if(tabuleiro[peca[0]][peca[1]] == 't' || tabuleiro[peca[0]][peca[1]] == 'T') {
+            if(movimento[0] != 0 && movimento[1] != 0) // não andou horizontalmente ou verticalmente
+                return false;
+
+            int x = movimento[1];
+            int y = movimento[0];
+            int eixo;
+            if(movimento[0] != 0)
+                eixo = 0;
+            else
+                eixo = 1;
+            for(int i=1; i < Math.abs(movimento[eixo]); i++) {  
+                if(x > 0)
+                    x--;
+                if(x < 0)
+                    x++;
+                if(y > 0)
+                    y--;
+                if(y < 0)
+                    y++;
+                if(tabuleiro[peca[0] + y][peca[1] + x] != ' ') // passou por cima de alguma peça
+                    return false;
+            }
+
+            return true;
+        }
+
+        // regras da rainha
+        if(tabuleiro[peca[0]][peca[1]] == 'a' || tabuleiro[peca[0]][peca[1]] == 'A') {
+            if(Math.abs(movimento[0]) == Math.abs(movimento[1])) {  // andou diagonalmente
+                int x = movimento[1];
+                int y = movimento[0];
+                for(int i=1; i < Math.abs(movimento[0]); i++) {  
+                    if(x > 0)
+                        x--;
+                    else
+                        x++;
+                    if(y > 0)
+                        y--;
+                    else
+                        y++;
+                    if(tabuleiro[peca[0] + y][peca[1] + x] != ' ') // passou por cima de alguma peça
+                        return false;
+                }
+            }else if(movimento[0] == 0 || movimento[1] == 0) {  // andou horizontalmente ou verticalmente
+                int x = movimento[1];
+                int y = movimento[0];
+                int eixo;
+                if(movimento[0] != 0)
+                    eixo = 0;
+                else
+                    eixo = 1;
+                for(int i=1; i < Math.abs(movimento[eixo]); i++) {  
+                    if(x > 0)
+                        x--;
+                    if(x < 0)
+                        x++;
+                    if(y > 0)
+                        y--;
+                    if(y < 0)
+                        y++;
+                    if(tabuleiro[peca[0] + y][peca[1] + x] != ' ') // passou por cima de alguma peça
+                        return false;
+                }
+            }else {
+                return false;
+            }
+
             return true;
         }
 
