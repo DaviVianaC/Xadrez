@@ -109,7 +109,7 @@ public class RegrasJogo {
         
         // regras da torre
         if(tabuleiro[peca[0]][peca[1]] == 't' || tabuleiro[peca[0]][peca[1]] == 'T') {
-            if(movimento[0] != 0 && movimento[1] != 0) // não andou horizontalmente ou verticalmente
+            if(movimento[0] != 0 && movimento[1] != 0) // não andou em linha reta
                 return false;
 
             int x = movimento[1];
@@ -152,7 +152,7 @@ public class RegrasJogo {
                     if(tabuleiro[peca[0] + y][peca[1] + x] != ' ') // passou por cima de alguma peça
                         return false;
                 }
-            }else if(movimento[0] == 0 || movimento[1] == 0) {  // andou horizontalmente ou verticalmente
+            }else if(movimento[0] == 0 || movimento[1] == 0) {  // andou em linha ou coluna
                 int x = movimento[1];
                 int y = movimento[0];
                 int eixo;
@@ -181,24 +181,21 @@ public class RegrasJogo {
         }
 
 		//regras do cavalo
-		if(tabuleiro[peca[0]][peca[1]] == 'c' || tabuleiro[peca[0]][peca[1]] == 'C'){
+		if(tabuleiro[peca[0]][peca[1]] == 'c' || tabuleiro[peca[0]][peca[1]] == 'C') {
+            int x = 1;
+            int y = 2;
                 // todos movimentos possiveis do cavalo
-			if(resultante[0]==peca[0]+2 && resultante[1]==peca[1]+1)
-                return true;
-            if(resultante[0]==peca[0]+2 && resultante[1]==peca[1]-1)
-                return true;
-            if(resultante[0]==peca[0]-2 && resultante[1]==peca[1]+1)
-                return true;
-            if(resultante[0]==peca[0]-2 && resultante[1]==peca[1]-1)
-                return true;
-            if(resultante[0]==peca[0]-1 && resultante[1]==peca[1]+2)
-                return true;
-            if(resultante[0]==peca[0]+1 && resultante[1]==peca[1]-2)
-                return true;
-            if(resultante[0]==peca[0]+1 && resultante[1]==peca[1]+2)
-                return true;
-            if(resultante[0]==peca[0]-1 && resultante[1]==peca[1]-2)
-                return true;	
+            for(int i = 1; i <= 8; i++) {
+                if(resultante[0]==peca[0]+y && resultante[1]==peca[1]+x)
+                    return true;
+                x *= -1;
+                if(i%2==0)
+                    y *= -1;
+                if(i==4){
+                    x = 2;
+                    y = 1;
+                }
+            }
 
 			return false;				
 		}
