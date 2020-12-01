@@ -93,7 +93,7 @@ public class RegrasJogo {
                 return false;
 
             // regras diferentes para cada lado
-            if(tabuleiro[peca[0]][peca[1]] == 'p') {            
+            if(tabuleiro[peca[0]][peca[1]] == 'p') {
                 if(resultante[0] > peca[0]) // andou para tras
                     return false;
                 if(movimento[0] == -2 && peca[0] != 6) // andou duas casas para frente após a primeira jogada
@@ -212,13 +212,12 @@ public class RegrasJogo {
             }else {
                 return false;
             }
-			
 
             return true;
         }
 
-		//regras do cavalo
-		if(tabuleiro[peca[0]][peca[1]] == 'c' || tabuleiro[peca[0]][peca[1]] == 'C') {                                                       
+        //regras do cavalo
+        if(tabuleiro[peca[0]][peca[1]] == 'c' || tabuleiro[peca[0]][peca[1]] == 'C') {
             // todos movimentos possiveis do cavalo
             if(resultante[0]==peca[0]+2 && resultante[1]==peca[1]+1)
                 return true;
@@ -237,16 +236,16 @@ public class RegrasJogo {
             if(resultante[0]==peca[0]-1 && resultante[1]==peca[1]-2)
                 return true;
 
-			return false;				
-		}
+            return false;
+        }
             
         //regras do rei
-		if(tabuleiro[peca[0]][peca[1]] == 'r' || tabuleiro[peca[0]][peca[1]] == 'R') {
+        if(tabuleiro[peca[0]][peca[1]] == 'r' || tabuleiro[peca[0]][peca[1]] == 'R') {
             if(movimento[1] > 1 || movimento[1] < -1)
                 return false;                            // andou mais que uma casa
             if(movimento[0] > 1 || movimento[0] < -1)  
                 return false;
-            if(!ignorar) // caso esteja em teste de movimento suicida não entra aqui
+            if(!ignorar) // caso esteja em teste de xeque não entra aqui
                 if(movimentoSuicida(peca, movimento))  // tentou se matar
                     return false;
 
