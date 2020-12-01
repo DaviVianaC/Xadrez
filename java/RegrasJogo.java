@@ -21,6 +21,13 @@ public class RegrasJogo {
         int[] resultante = {peca[0] + movimento[0], peca[1] + movimento[1]};
 
         if(movimentoPermitido(peca, movimento, false)) {
+            // salvando coordenada do rei
+            if(tabuleiro[peca[0]][peca[1]] == 'r')
+                indiceDoReiBranco = resultante;
+            if(tabuleiro[peca[0]][peca[1]] == 'R')
+                indiceDoReiPreto = resultante;
+            
+            // mudando matriz
             tabuleiro[resultante[0]][resultante[1]] = tabuleiro[peca[0]][peca[1]];
             tabuleiro[peca[0]][peca[1]] = ' ';
             return 0;
@@ -234,19 +241,14 @@ public class RegrasJogo {
 		}
             
         //regras do rei
-		if(tabuleiro[peca[0]][peca[1]] == 'r' || tabuleiro[peca[0]][peca[1]] == 'R') {     
+		if(tabuleiro[peca[0]][peca[1]] == 'r' || tabuleiro[peca[0]][peca[1]] == 'R') {
             if(movimento[1] > 1 || movimento[1] < -1)
                 return false;                            // andou mais que uma casa
             if(movimento[0] > 1 || movimento[0] < -1)  
                 return false;
-            if(!ignorar) { // caso esteja em teste de movimento suicida não entra aqui
+            if(!ignorar) // caso esteja em teste de movimento suicida não entra aqui
                 if(movimentoSuicida(peca, movimento))  // tentou se matar
                     return false;
-                if(tabuleiro[peca[0]][peca[1]] == 'r')  // salvando coordenada do rei
-                    indiceDoReiBranco = resultante;
-                else
-                    indiceDoReiPreto = resultante;
-            }
 
             return true;
         }
