@@ -16,78 +16,13 @@ public class RegrasJogo {
     public int movimentarPeca(int[] peca, int[] movimento) {
         // posição em que a peça irá se encontrar apos o movimento
         int[] resultante = {peca[0] + movimento[0], peca[1] + movimento[1]};
-        switch(tabuleiro[peca[0]][peca[1]]) {
-            case 'p':
-                if(movimentoPermitido(peca, movimento)){
-                    tabuleiro[resultante[0]][resultante[1]] = 'p';
-                    tabuleiro[peca[0]][peca[1]] = ' ';
-                    return 0;
-                }
-                break;
-            case 'P':
-                if(movimentoPermitido(peca, movimento)){
-                    tabuleiro[resultante[0]][resultante[1]] = 'P';
-                    tabuleiro[peca[0]][peca[1]] = ' ';
-                    return 0;
-                }
-                break;
-            case 'b':
-                if(movimentoPermitido(peca, movimento)){
-                    tabuleiro[resultante[0]][resultante[1]] = 'b';
-                    tabuleiro[peca[0]][peca[1]] = ' ';
-                    return 0;
-                }
-                break;
-            case 'B':
-                if(movimentoPermitido(peca, movimento)){
-                    tabuleiro[resultante[0]][resultante[1]] = 'B';
-                    tabuleiro[peca[0]][peca[1]] = ' ';
-                    return 0;
-                }
-                break;
-            case 'a':
-                if(movimentoPermitido(peca, movimento)){
-                    tabuleiro[resultante[0]][resultante[1]] = 'a';
-                    tabuleiro[peca[0]][peca[1]] = ' ';
-                    return 0;
-                }
-                break;
-            case 'A':
-                if(movimentoPermitido(peca, movimento)){
-                    tabuleiro[resultante[0]][resultante[1]] = 'A';
-                    tabuleiro[peca[0]][peca[1]] = ' ';
-                    return 0;
-                }
-                break;
-            case 't':
-                if(movimentoPermitido(peca, movimento)){
-                    tabuleiro[resultante[0]][resultante[1]] = 't';
-                    tabuleiro[peca[0]][peca[1]] = ' ';
-                    return 0;
-                }
-                break;
-            case 'T':
-                if(movimentoPermitido(peca, movimento)){
-                    tabuleiro[resultante[0]][resultante[1]] = 'T';
-                    tabuleiro[peca[0]][peca[1]] = ' ';
-                    return 0;
-                }
-                break;
-			case 'c':
-                if(movimentoPermitido(peca, movimento)){
-                    tabuleiro[resultante[0]][resultante[1]] = 'c';
-                    tabuleiro[peca[0]][peca[1]] = ' ';
-                    return 0;
-                }
-                break;
-            case 'C':
-                if(movimentoPermitido(peca, movimento)){
-                    tabuleiro[resultante[0]][resultante[1]] = 'C';
-                    tabuleiro[peca[0]][peca[1]] = ' ';
-                    return 0;
-                }
-                break;
+
+        if(movimentoPermitido(peca, movimento)) {
+            tabuleiro[resultante[0]][resultante[1]] = tabuleiro[peca[0]][peca[1]];
+            tabuleiro[peca[0]][peca[1]] = ' ';
+            return 0;
         }
+
         return -1;
     }
 
@@ -245,7 +180,7 @@ public class RegrasJogo {
             return true;
         }
 
-		 //regras do cavalo
+		//regras do cavalo
 		if(tabuleiro[peca[0]][peca[1]] == 'c' || tabuleiro[peca[0]][peca[1]] == 'C'){
                 // todos movimentos possiveis do cavalo
 			if(resultante[0]==peca[0]+2 && resultante[1]==peca[1]+1)
