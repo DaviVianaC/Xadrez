@@ -181,24 +181,28 @@ public class RegrasJogo {
         }
 
 		//regras do cavalo
-		if(tabuleiro[peca[0]][peca[1]] == 'c' || tabuleiro[peca[0]][peca[1]] == 'C') {
-            int x = 1;
-            int y = 2;
-                // todos movimentos possiveis do cavalo
-            for(int i = 1; i <= 8; i++) {
-                if(resultante[0]==peca[0]+y && resultante[1]==peca[1]+x)
-                    return true;
-                x *= -1;
-                if(i%2==0)
-                    y *= -1;
-                if(i==4){
-                    x = 2;
-                    y = 1;
-                }
-            }
+		if(tabuleiro[peca[0]][peca[1]] == 'c' || tabuleiro[peca[0]][peca[1]] == 'C') {                                                       
+            // todos movimentos possiveis do cavalo
+            if(resultante[0]==peca[0]+2 && resultante[1]==peca[1]+1)
+                return true;
+            if(resultante[0]==peca[0]+2 && resultante[1]==peca[1]-1)
+                return true;
+            if(resultante[0]==peca[0]-2 && resultante[1]==peca[1]+1)
+                return true;
+            if(resultante[0]==peca[0]-2 && resultante[1]==peca[1]-1)
+                return true;
+            if(resultante[0]==peca[0]+1 && resultante[1]==peca[1]+2)
+                return true;
+            if(resultante[0]==peca[0]+1 && resultante[1]==peca[1]-2)
+                return true; 
+            if(resultante[0]==peca[0]-1 && resultante[1]==peca[1]+2)
+                return true;
+            if(resultante[0]==peca[0]-1 && resultante[1]==peca[1]-2)
+                return true;
 
 			return false;				
 		}
+            
 	
         
         return false;
