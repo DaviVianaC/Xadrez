@@ -244,11 +244,27 @@ public class RegrasJogo {
 
             return true;
         }
+
 		 //regras do cavalo
 		if(tabuleiro[peca[0]][peca[1]] == 'c' || tabuleiro[peca[0]][peca[1]] == 'C'){
-			if((resultante[0]==peca[0]+2 && resultante[1]==peca[1]+1 )||(resultante[0]==peca[0]+2 && resultante[1]==peca[1]-1 ) || (resultante[0]==peca[0]-2 && resultante[1]==peca[1]+1 ) || (resultante[0]==peca[0]-2 && resultante[1]==peca[1]-1) || (resultante[0]==peca[0]-1 && resultante[1]==peca[1]+2 ) || (resultante[0]==peca[0]+1 && resultante[1]==peca[1]-2 ) || (resultante[0]==peca[0]+1 && resultante[1]==peca[1]+2 )|| (resultante[0]==peca[0]-1 && resultante[1]==peca[1]-2 )){
-				return true;	
-			}
+                // todos movimentos possiveis do cavalo
+			if(resultante[0]==peca[0]+2 && resultante[1]==peca[1]+1)
+                return true;
+            if(resultante[0]==peca[0]+2 && resultante[1]==peca[1]-1)
+                return true;
+            if(resultante[0]==peca[0]-2 && resultante[1]==peca[1]+1)
+                return true;
+            if(resultante[0]==peca[0]-2 && resultante[1]==peca[1]-1)
+                return true;
+            if(resultante[0]==peca[0]-1 && resultante[1]==peca[1]+2)
+                return true;
+            if(resultante[0]==peca[0]+1 && resultante[1]==peca[1]-2)
+                return true;
+            if(resultante[0]==peca[0]+1 && resultante[1]==peca[1]+2)
+                return true;
+            if(resultante[0]==peca[0]-1 && resultante[1]==peca[1]-2)
+                return true;	
+
 			return false;				
 		}
 	
