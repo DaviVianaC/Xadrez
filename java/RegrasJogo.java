@@ -41,41 +41,39 @@ public class RegrasJogo {
         int[] resultante = {peca[0] + movimento[0], peca[1] + movimento[1]};
 
         // regras iguais para todas as peças
-        if(!ignorar) // ignora em caso de teste de xeque
-            if(movimento[0] == 0 && movimento[1] == 0) // não andou
-                return false;
+        if(movimento[0] == 0 && movimento[1] == 0) // não andou
+            return false;
         if(resultante[0] > 7 || resultante[0] < 0 || resultante[1] > 7 || resultante[1] < 0 ) // fora dos limites
             return false;
-        
-        
-        
-        if(tabuleiro[peca[0]][peca[1]] > 90) { 
+        if(tabuleiro[peca[0]][peca[1]] > 90) {
             if(tabuleiro[resultante[0]][resultante[1]] > 90) // tentou matar um aliado branco
                 return false;
-           
         }else {                                             // tentou matar um aliado preto
             if(tabuleiro[resultante[0]][resultante[1]] < 97 && tabuleiro[resultante[0]][resultante[1]] != 32) 
                 return false;
         }
-
         
         // teste de xeque
         if(!ignorar && tabuleiro[peca[0]][peca[1]] != 'r' && tabuleiro[peca[0]][peca[1]] != 'R') {
-            char pecaMovimentada = tabuleiro[peca[0]][peca[1]];
-            char possivelPeca = tabuleiro[resultante[0]][resultante[1]];
-            tabuleiro[resultante[0]][resultante[1]] = pecaMovimentada;
-            tabuleiro[peca[0]][peca[1]] = ' ';
             int[] movimentoZero = {0, 0};
             boolean reiEmXeque = false;
-            if(pecaMovimentada > 90)
-                 if(movimentoSuicida(indiceDoReiBranco, movimentoZero))
-                     reiEmXeque = true;
-            else
+            char pecaMovimentada = tabuleiro[peca[0]][peca[1]];
+            char possivelPeca = tabuleiro[resultante[0]][resultante[1]];
+
+            tabuleiro[resultante[0]][resultante[1]] = pecaMovimentada;
+            tabuleiro[peca[0]][peca[1]] = ' ';
+            
+            if(pecaMovimentada > 90) {
+                if(movimentoSuicida(indiceDoReiBranco, movimentoZero))
+                    reiEmXeque = true;
+            }else {
                  if(movimentoSuicida(indiceDoReiPreto, movimentoZero))
                     reiEmXeque = true;
-            
+            }
+
             tabuleiro[peca[0]][peca[1]] = pecaMovimentada;
             tabuleiro[resultante[0]][resultante[1]] = possivelPeca;
+
             if(reiEmXeque)
                 return false;
         }
