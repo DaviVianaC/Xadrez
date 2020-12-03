@@ -21,9 +21,16 @@ public class Interface {
         System.out.println("digite o movimento horizontal\n Ex: 0");
         System.out.print("> ");
         int xm = sc.nextInt();
+        
         int[] peca = {Integer.parseInt(p.substring(0,1)),Integer.parseInt(p.substring(1,2))};
         int[] movimento = {ym,xm};
         erro = jogo.movimentarPeca(peca, movimento);
+
+        if(jogo.getPeaoPromovido()[0] != -1) {
+            System.out.println("digite:\n\t1 para Rainha\n\t2 para Cavalo\n\t3 para Torre\n\t4 paraBispo\n\t0 para cancelar");
+            System.out.print("> ");
+            jogo.promocao(sc.nextInt());
+        }
         
         iniciar(); // a interface não vai ser recursiva, é so um teste
     }
