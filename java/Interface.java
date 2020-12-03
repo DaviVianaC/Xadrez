@@ -10,7 +10,7 @@ public class Interface {
         System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
         desenharTabuleiro();
         if(erro == -1) {
-            System.out.println("\ncomando invalido");
+            System.out.println("\nMovimento invalido");
         }
         System.out.println("\ndigite a cordenada da peca (y,x)\n Ex: 61");
         System.out.print("> ");

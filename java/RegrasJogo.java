@@ -1,3 +1,4 @@
+import java.util.Arrays;
 public class RegrasJogo {
 
     private char[][] tabuleiro = {{'T', 'C', 'B', 'A', 'R', 'B', 'C', 'T'},
@@ -11,7 +12,13 @@ public class RegrasJogo {
 
     private int[] indiceDoReiBranco = {7, 4};
     private int[] indiceDoReiPreto = {0, 4};
-    
+    private boolean reiBrancoMovido = false;
+    private boolean reiPretoMovido = false;
+    private boolean torreBranca1Movido = false;
+    private boolean torreBranca2Movido = false;
+    private boolean torrePreta1Movido = false;
+    private boolean torrePreta2Movido = false;
+
     public char[][] getTabuleiro() {
         return tabuleiro;
     }
@@ -21,12 +28,26 @@ public class RegrasJogo {
         int[] resultante = {peca[0] + movimento[0], peca[1] + movimento[1]};
 
         if(movimentoPermitido(peca, movimento, false)) {
-            // salvando coordenada do rei
-            if(tabuleiro[peca[0]][peca[1]] == 'r')
+            // salvando coordenada do rei e verificando movimento para possibilidade de roque
+            if(tabuleiro[peca[0]][peca[1]] == 'r') {
                 indiceDoReiBranco = resultante;
-            if(tabuleiro[peca[0]][peca[1]] == 'R')
+                reiBrancoMovido = true;
+            }
+            if(tabuleiro[peca[0]][peca[1]] == 'R') {
                 indiceDoReiPreto = resultante;
-            
+                reiPretoMovido = true;
+            }
+
+            // verificando movimento de torres para possibilidade de roque
+            if(tabuleiro[7][0] != 't')
+                torreBranca1Movido = true;
+            if(tabuleiro[7][7] != 't')
+                torreBranca2Movido = true;
+            if(tabuleiro[0][0] != 'T')
+                torrePreta1Movido = true;
+            if(tabuleiro[0][7] != 'T')
+                torrePreta2Movido = true;
+
             // mudando matriz
             tabuleiro[resultante[0]][resultante[1]] = tabuleiro[peca[0]][peca[1]];
             tabuleiro[peca[0]][peca[1]] = ' ';
@@ -41,6 +62,8 @@ public class RegrasJogo {
         int[] resultante = {peca[0] + movimento[0], peca[1] + movimento[1]};
 
         // regras iguais para todas as peças
+        if(tabuleiro[peca[0]][peca[1]] == ' ') // não é uma peça
+            return false;
         if(movimento[0] == 0 && movimento[1] == 0) // não andou
             return false;
         if(resultante[0] > 7 || resultante[0] < 0 || resultante[1] > 7 || resultante[1] < 0 ) // fora dos limites
@@ -52,9 +75,24 @@ public class RegrasJogo {
             if(tabuleiro[resultante[0]][resultante[1]] < 97 && tabuleiro[resultante[0]][resultante[1]] != 32) 
                 return false;
         }
-        if(!ignorar && reiEmXeque(peca, movimento)) // teste de xeque apos movimento
-            return false;
-        
+
+        // teste de xeque após movimento
+        if(!ignorar && !Arrays.equals(peca, indiceDoReiBranco) && !Arrays.equals(peca, indiceDoReiPreto)) {  
+            char pecaMovimentada = tabuleiro[peca[0]][peca[1]];         // salvando peças para teste
+            char possivelPeca = tabuleiro[resultante[0]][resultante[1]];
+
+            tabuleiro[resultante[0]][resultante[1]] = pecaMovimentada;
+            tabuleiro[peca[0]][peca[1]] = ' ';
+
+            boolean resultado = reiEmXeque(pecaMovimentada);
+
+            tabuleiro[resultante[0]][resultante[1]] = possivelPeca;
+            tabuleiro[peca[0]][peca[1]] = pecaMovimentada;
+
+            if(resultado){
+                return false;
+            }
+        }   
 
         // regras do peão
         if(tabuleiro[peca[0]][peca[1]] == 'p' || tabuleiro[peca[0]][peca[1]] == 'P') {
@@ -217,11 +255,21 @@ public class RegrasJogo {
             
         //regras do rei
         if(tabuleiro[peca[0]][peca[1]] == 'r' || tabuleiro[peca[0]][peca[1]] == 'R') {
-            if(movimento[1] > 1 || movimento[1] < -1)
-                return false;                            // andou mais que uma casa
-            if(movimento[0] > 1 || movimento[0] < -1)  
+            if(roquePermitido(peca, movimento)) {
+                if(movimento[1] > 0){ // pequeno roque
+                    tabuleiro[peca[0]][peca[1]+1] = tabuleiro[peca[0]][peca[1]+3];
+                    tabuleiro[peca[0]][peca[1]+3] = ' ';
+                }else{  // grande roque
+                    tabuleiro[peca[0]][peca[1]-1] = tabuleiro[peca[0]][peca[1]-4];
+                    tabuleiro[peca[0]][peca[1]-4] = ' ';
+                }
+            }else if(movimento[1] > 1 || movimento[1] < -1) // andou mais que uma casa horizontalmente sem possibilida de roque
+                return false;    
+                                        
+            if(movimento[0] > 1 || movimento[0] < -1)  // andou mais que uma casa verticalmente
                 return false;
-            if(!ignorar) // caso esteja em teste de xeque não entra aqui
+
+            if(!ignorar) // caso esteja em teste de movimento suicida não entra aqui
                 if(movimentoSuicida(peca, movimento))  // tentou se matar
                     return false;
 
@@ -239,8 +287,7 @@ public class RegrasJogo {
         char pecaTeste = 'E';
         if(pecaMovimentada > 90)
             pecaTeste = 'e';
-            
-        
+
         for(int i=0; i < 8; i++) {
             for(int j=0; j < 8; j++) {
                 int[] p = {i, j};
@@ -248,7 +295,7 @@ public class RegrasJogo {
 
                 tabuleiro[peca[0]][peca[1]] = ' '; // rei removido para teste
                 tabuleiro[resultante[0]][resultante[1]] = pecaTeste; // peça colocada para teste 
-                if(movimentoPermitido(p, m, true)){ // testando possivel ataque de todas as peças inimigas
+                if(movimentoPermitido(p, m, true)) { // testando possivel ataque de todas as peças inimigas
                     tabuleiro[resultante[0]][resultante[1]] = possivelPeca; // removendo peça de teste
                     tabuleiro[peca[0]][peca[1]] = pecaMovimentada; // rei retornado
                     return true;
@@ -263,30 +310,54 @@ public class RegrasJogo {
         return false; 
     }
 
-    private boolean reiEmXeque(int[] peca, int[] movimento) {
-        if(tabuleiro[peca[0]][peca[1]] == 'r' || tabuleiro[peca[0]][peca[1]] == 'R')
-            return false;
-
-        int[] resultante = {peca[0] + movimento[0], peca[1] + movimento[1]};
+    private boolean reiEmXeque(char peca) {
         int[] movimentoZero = {0, 0};
         boolean reiEmXeque = false;
-        char pecaMovimentada = tabuleiro[peca[0]][peca[1]];
-        char possivelPeca = tabuleiro[resultante[0]][resultante[1]];
 
-        tabuleiro[resultante[0]][resultante[1]] = pecaMovimentada;
-        tabuleiro[peca[0]][peca[1]] = ' ';
-
-        if(pecaMovimentada > 90) {
+        if(peca > 90) {
             if(movimentoSuicida(indiceDoReiBranco, movimentoZero))
                 reiEmXeque = true;
         }else {
             if(movimentoSuicida(indiceDoReiPreto, movimentoZero))
                 reiEmXeque = true;
         }
-
-        tabuleiro[peca[0]][peca[1]] = pecaMovimentada;
-        tabuleiro[resultante[0]][resultante[1]] = possivelPeca;
-
+        
         return reiEmXeque;     
+    }
+
+    private boolean roquePermitido(int[] peca, int[] movimento) {
+        if(reiEmXeque(tabuleiro[peca[0]][peca[1]]))
+            return false;
+
+        if(movimento[1] != -2 && movimento[1] != 2 || movimento[0] != 0)
+            return false;
+
+        if(tabuleiro[peca[0]][peca[1]] == 'r' && !reiBrancoMovido) {
+            if(movimento[1] == -2 && torreBranca1Movido || movimento[1] == -2 && tabuleiro[peca[0]][peca[1]-3] != ' ') 
+                return false;
+            if(movimento[1] == 2 && torreBranca2Movido) 
+                return false;
+        }else if(tabuleiro[peca[0]][peca[1]] == 'R' && !reiPretoMovido) {
+            if(movimento[1] == -2 && torrePreta1Movido || movimento[1] == -2 && tabuleiro[peca[0]][peca[1]-3] != ' ') 
+                return false;
+            if(movimento[1] == 2 && torrePreta2Movido) 
+                return false;
+        }else {
+            return false;
+        }
+
+        int[] movimentoDeTeste = {0, 0};
+        for(int i = movimento[1]; i!=0;) {
+            if(tabuleiro[peca[0]][peca[1]+i] != ' ')
+                return false;
+
+            movimentoDeTeste[1] = i;
+            if(movimentoSuicida(peca, movimentoDeTeste))
+                return false;
+
+            i = (i>0) ? i-1 : i+1;
+        }
+
+        return true;
     }
 }
