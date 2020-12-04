@@ -5,16 +5,20 @@ public class Interface {
     private RegrasJogo jogo = new RegrasJogo();
     private Scanner sc = new Scanner(System.in);
     private int erro = 0;
-    
+    private int[] gambiarraPraTeste = {0,0};
+
     public void iniciar() {
         System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
-        desenharTabuleiro();
+        desenharTabuleiro(false, gambiarraPraTeste);
         if(erro == -1) {
             System.out.println("\nMovimento invalido");
         }
         System.out.println("\ndigite a cordenada da peca (y,x)\n Ex: 61");
         System.out.print("> ");
         String p = sc.next();
+        int[] peca = {Integer.parseInt(p.substring(0,1)),Integer.parseInt(p.substring(1,2))};
+        System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+        desenharTabuleiro(true, peca);
         System.out.println("digite o movimento vertical \n Ex: -1");
         System.out.print("> ");
         int ym = sc.nextInt();
@@ -22,7 +26,7 @@ public class Interface {
         System.out.print("> ");
         int xm = sc.nextInt();
         
-        int[] peca = {Integer.parseInt(p.substring(0,1)),Integer.parseInt(p.substring(1,2))};
+        
         int[] movimento = {ym,xm};
         erro = jogo.movimentarPeca(peca, movimento);
 
@@ -34,12 +38,29 @@ public class Interface {
         
         iniciar(); // a interface não vai ser recursiva, é so um teste
     }
-    public void desenharTabuleiro() {
+    public void desenharTabuleiro(boolean desenharMovimentos, int[] peca) {
+        int[] movimento = {0, 0};
         for(int i = 0; i < 8; i++){
             for(int j = 0; j< 8; j++){
                 if(j==0)
                     System.out.print(i + "  ");
-                System.out.print(jogo.getTabuleiro()[i][j]+ " ");
+
+                if(peca[0] > i)
+                    movimento[0] = i - peca[0];
+                else
+                    movimento[0] = i - peca[0];
+
+                if(peca[1] > i)
+                    movimento[1] = j - peca[1];
+                else
+                    movimento[1] = j - peca[1];
+                
+                //System.out.print(movimento[0] + " "+movimento[1]);
+                if(desenharMovimentos && jogo.getTabuleiro()[i][j] == ' ' && jogo.movimentoPermitido(peca, movimento, false))
+                    System.out.print("* ");
+                else
+                    System.out.print(jogo.getTabuleiro()[i][j]+ " ");
+                
             }
             System.out.println();
         }

@@ -21,6 +21,8 @@ public class RegrasJogo {
     private int[] peaoPromovido = {-1, -1};
     private int[] indicePeao = new int[2];
     private int[] peaoEnPassant = {-1,-1};
+    private boolean enPassantFlag = false;
+    private int roqueFlag = -1;
 
     public char[][] getTabuleiro() {
         return tabuleiro;
@@ -37,6 +39,8 @@ public class RegrasJogo {
         if(peaoPromovido[0] != -1) // tem um peão para ser promovido
             return -1;
 
+        enPassantFlag = false;
+        roqueFlag = -1;
         if(movimentoPermitido(peca, movimento, false)) {
             // salvando coordenada do rei e verificando movimento para possibilidade de roque
             if(tabuleiro[peca[0]][peca[1]] == 'r') {
@@ -59,6 +63,8 @@ public class RegrasJogo {
                 torrePreta2Movido = true;
 
             // En passant so é valido se efetuado imediatamente apos o movimento do peao inimigo
+            if(enPassantFlag)
+                    tabuleiro[peaoEnPassant[0]][peaoEnPassant[1]] = ' ';
             peaoEnPassant[0] = -1; 
             peaoEnPassant[1] = -1;    
 
@@ -66,15 +72,23 @@ public class RegrasJogo {
                 peaoEnPassant = resultante;
 
             // peão promovido
-            if((tabuleiro[peca[0]][peca[1]] == 'p' || tabuleiro[peca[0]][peca[1]] == 'P') && resultante[0] == 0 || resultante[0] == 7) {
+            if((tabuleiro[peca[0]][peca[1]] == 'p' || tabuleiro[peca[0]][peca[1]] == 'P') && (resultante[0] == 0 || resultante[0] == 7)) {
                 indicePeao[0] = peca[0];
                 indicePeao[1] = peca[1];
                 peaoPromovido[0] = resultante[0];
                 peaoPromovido[1] = resultante[1];
             }else {
                 // mudando matriz
+                if(roqueFlag == 1) {
+                    tabuleiro[peca[0]][peca[1]+1] = tabuleiro[peca[0]][peca[1]+3];
+                    tabuleiro[peca[0]][peca[1]+3] = ' ';
+                }else if(roqueFlag == 0) {
+                    tabuleiro[peca[0]][peca[1]-1] = tabuleiro[peca[0]][peca[1]-4];
+                    tabuleiro[peca[0]][peca[1]-4] = ' ';
+                }
+
                 tabuleiro[resultante[0]][resultante[1]] = tabuleiro[peca[0]][peca[1]];
-                tabuleiro[peca[0]][peca[1]] = ' ';
+                tabuleiro[peca[0]][peca[1]] = ' '; 
             }
             return 0;
         }
@@ -123,8 +137,8 @@ public class RegrasJogo {
         if(tabuleiro[peca[0]][peca[1]] == 'p' || tabuleiro[peca[0]][peca[1]] == 'P') {
             // regras iguais para ambos os lados
             if(movimento[0] == 0) // não andou verticalmente
-                return false;
-            if(resultante[1] != peca[1] && tabuleiro[resultante[0]][resultante[1]] == ' ' && peaoEnPassant[0] == -1) // andou para o lado sem peca para matar
+                return false;                                                                 // andou para o lado sem peca para matar
+            if(resultante[1] != peca[1] && tabuleiro[resultante[0]][resultante[1]] == ' ' && !enPassantValido(peca, resultante))
                 return false;
             if(movimento[1] > 1 || movimento[1] < -1) // andou mais que uma casa para o lado
                 return false;
@@ -140,17 +154,10 @@ public class RegrasJogo {
                 if(movimento[0] == -2 && movimento[1] != 0) // andou duas casas para frente e tambem uma para o lado
                     return false;
                 if(movimento[0] < -2) // andou mais que duas casas para frente
+                    return false;                                                             // andou duas casas para frente com a casa intermediaria ocupada
+                if(movimento[1] == 0 && movimento[0] == -2 && tabuleiro[resultante[0]+1][resultante[1]] != ' ')
                     return false;
-                if(movimento[1] == 0 && movimento[0] == -2 && tabuleiro[resultante[0]+1][resultante[1]] != ' ') // andou duas casas para frente com a casa intermediaria ocupada
-                    return false;
-                // jogada En Passant valida
-                if(resultante[0] == peaoEnPassant[0]-1 && resultante[1] == peaoEnPassant[1] && tabuleiro[peaoEnPassant[0]][peaoEnPassant[1]] == 'P') { 
-                    tabuleiro[peaoEnPassant[0]][peaoEnPassant[1]] = ' ';
-                    tabuleiro[peaoEnPassant[0]-1][peaoEnPassant[1]] = 'p';
-                }else if(peaoEnPassant[0] != -1 && tabuleiro[peaoEnPassant[0]][peaoEnPassant[1]] == 'p' && resultante[0] == peaoEnPassant[0]+1 && resultante[1] == peaoEnPassant[1]) {  
-                    return false;    // jogada En Passant invalida
-                }
-
+                
             }else if(tabuleiro[peca[0]][peca[1]] == 'P') {
                 if(resultante[0] < peca[0]) // andou para tras
                     return false;
@@ -159,16 +166,9 @@ public class RegrasJogo {
                 if(movimento[0] == 2 && movimento[1] != 0) // andou duas casas para frente e tambem uma para o lado
                     return false;
                 if(movimento[0] > 2) // andou mais que duas casas para frente
+                    return false;                                                             // andou duas casas para frente com a casa intermediaria ocupada
+                if(movimento[1] == 0 && movimento[0] == 2 && tabuleiro[resultante[0]-1][resultante[1]] != ' ') 
                     return false;
-                if(movimento[1] == 0 && movimento[0] == 2 && tabuleiro[resultante[0]-1][resultante[1]] != ' ') // andou duas casas para frente com a casa intermediaria ocupada
-                    return false;
-                // jogada En Passant valida
-                if(resultante[0] == peaoEnPassant[0]+1 && resultante[1] == peaoEnPassant[1] && tabuleiro[peaoEnPassant[0]][peaoEnPassant[1]] == 'p') {
-                    tabuleiro[peaoEnPassant[0]][peaoEnPassant[1]] = ' ';
-                    tabuleiro[peaoEnPassant[0]+1][peaoEnPassant[1]] = 'P';
-                }else if(peaoEnPassant[0] != -1 && tabuleiro[peaoEnPassant[0]][peaoEnPassant[1]] == 'P' && resultante[0] == peaoEnPassant[0]-1 && resultante[1] == peaoEnPassant[1]) {  
-                    return false;    // jogada En Passant invalida
-                }
             }
 
             return true;
@@ -296,11 +296,9 @@ public class RegrasJogo {
         if(tabuleiro[peca[0]][peca[1]] == 'r' || tabuleiro[peca[0]][peca[1]] == 'R') {
             if(roquePermitido(peca, movimento)) {
                 if(movimento[1] > 0){ // pequeno roque
-                    tabuleiro[peca[0]][peca[1]+1] = tabuleiro[peca[0]][peca[1]+3];
-                    tabuleiro[peca[0]][peca[1]+3] = ' ';
+                    roqueFlag = 1;
                 }else{  // grande roque
-                    tabuleiro[peca[0]][peca[1]-1] = tabuleiro[peca[0]][peca[1]-4];
-                    tabuleiro[peca[0]][peca[1]-4] = ' ';
+                    roqueFlag = 0;
                 }
             }else if(movimento[1] > 1 || movimento[1] < -1) // andou mais que uma casa horizontalmente sem possibilida de roque
                 return false;    
@@ -317,6 +315,7 @@ public class RegrasJogo {
         
         return false;
     }
+
 
     private boolean movimentoSuicida(int[] peca, int[] movimento) {
         int[] resultante = {peca[0] + movimento[0], peca[1] + movimento[1]};
@@ -425,5 +424,28 @@ public class RegrasJogo {
         // indicando que não há peão para ser promovido
         peaoPromovido[0] = -1;
         peaoPromovido[1] = -1;
+    }
+
+    private boolean enPassantValido(int[] peca, int[] resultante) {
+        if(peaoEnPassant[0] == -1)
+            return false;
+
+        if(tabuleiro[peca[0]][peca[1]] == 'p') {
+            if(peca[0] == 3 && tabuleiro[peaoEnPassant[0]][peaoEnPassant[1]] == 'P' && resultante[0] == peaoEnPassant[0]-1 && resultante[1] == peaoEnPassant[1]) {
+                enPassantFlag = true;
+                return true;
+            }else {  
+                return false;
+            }
+        }else if(tabuleiro[peca[0]][peca[1]] == 'P') {
+            if(peca[0] == 4 && tabuleiro[peaoEnPassant[0]][peaoEnPassant[1]] == 'p' && resultante[0] == peaoEnPassant[0]+1  && resultante[1] == peaoEnPassant[1]) {
+                enPassantFlag = true;
+                return true;
+            }else {
+                return false;
+            }
+        }
+
+        return false;
     }
 }
