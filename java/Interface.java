@@ -13,6 +13,12 @@ public class Interface {
         if(erro == -1) {
             System.out.println("\nMovimento invalido");
         }
+        if(erro == -3) {
+            System.out.println("\nvez das peças pretas");
+        }
+        if(erro == -4) {
+            System.out.println("\nvez das peças brancas");
+        }
         System.out.println("\ndigite a cordenada da peca (y,x)\n Ex: 61");
         System.out.print("> ");
         String p = sc.next();
@@ -35,7 +41,37 @@ public class Interface {
             System.out.print("> ");
             jogo.promocao(sc.nextInt());
         }
-        
+
+        if(jogo.getFimDeJogo() == 2) {
+            System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+            System.out.println("empate por afogamento");
+            return;
+        }
+        if(jogo.getFimDeJogo() == 3) {
+            System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+            System.out.println("empate por tripla repetição");
+            return;
+        }
+        if(jogo.getFimDeJogo() == 4) {
+            System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+            System.out.println("empate por material insuficiente");
+            return;
+        }
+        if(jogo.getFimDeJogo() == 5) {
+            System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+            System.out.println("empate por cinquenta lançes");
+            return;
+        }
+        if(jogo.getFimDeJogo() == 0) {
+            System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+            System.out.println("vitoria das brancas");
+            return;
+        } 
+        if(jogo.getFimDeJogo() == 1) {
+            System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+            System.out.println("vitoria das pretas");
+            return;
+        }       
         iniciar(); // a interface não vai ser recursiva, é so um teste
     }
     public void desenharTabuleiro(boolean desenharMovimentos, int[] peca) {

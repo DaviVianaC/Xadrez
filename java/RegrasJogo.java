@@ -10,6 +10,9 @@ public class RegrasJogo {
                                   {'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'},
                                   {'t', 'c', 'b', 'a', 'r', 'b', 'c', 't'}};
 
+
+                                
+
     private int[] indiceDoReiBranco = {7, 4};
     private int[] indiceDoReiPreto = {0, 4};
     private boolean reiBrancoMovido = false;
@@ -23,6 +26,12 @@ public class RegrasJogo {
     private int[] peaoEnPassant = {-1,-1};
     private boolean enPassantFlag = false;
     private int roqueFlag = -1;
+    private boolean alternarJogadas = false;
+    private int fimDeJogo = -1;
+    private char[][][] historicoTabuleiro = new char[0][8][8];
+    private int[] numeroDeRepeticoes = new int[0];
+    private float lancesSemAtividade = 0f;
+    private int numeroDePecasNoTabuleiro = 32;
 
     public char[][] getTabuleiro() {
         return tabuleiro;
@@ -32,22 +41,40 @@ public class RegrasJogo {
         return peaoPromovido;
     }
 
+    public int getFimDeJogo() {
+        return fimDeJogo;
+    }
+
+    public void comumAcordo() {
+        fimDeJogo = 0;
+    }
+
     public int movimentarPeca(int[] peca, int[] movimento) {
         // posição em que a peça irá se encontrar apos o movimento
         int[] resultante = {peca[0] + movimento[0], peca[1] + movimento[1]};
         
+        
         if(peaoPromovido[0] != -1) // tem um peão para ser promovido
-            return -1;
+            return -2;
+
+        if(tabuleiro[peca[0]][peca[1]] > 90 && alternarJogadas)
+            return -3;
+        if(tabuleiro[peca[0]][peca[1]] < 97 && tabuleiro[peca[0]][peca[1]] != ' ' && !alternarJogadas)
+            return -4;
+        
+        if(fimDeJogo != -1) // a partida ja acabou
+            return -5;
 
         enPassantFlag = false;
         roqueFlag = -1;
         if(movimentoPermitido(peca, movimento, false)) {
             // salvando coordenada do rei e verificando movimento para possibilidade de roque
-            if(tabuleiro[peca[0]][peca[1]] == 'r') {
+            char pecaChar = tabuleiro[peca[0]][peca[1]];
+            if(pecaChar == 'r') {
                 indiceDoReiBranco = resultante;
                 reiBrancoMovido = true;
             }
-            if(tabuleiro[peca[0]][peca[1]] == 'R') {
+            if(pecaChar == 'R') {
                 indiceDoReiPreto = resultante;
                 reiPretoMovido = true;
             }
@@ -68,16 +95,16 @@ public class RegrasJogo {
             peaoEnPassant[0] = -1; 
             peaoEnPassant[1] = -1;    
 
-            if((movimento[0] == 2 || movimento[0] == -2) && (tabuleiro[peca[0]][peca[1]] == 'p' || tabuleiro[peca[0]][peca[1]] == 'P')) // peão en passant
+            if((movimento[0] == 2 || movimento[0] == -2) && (pecaChar == 'p' || pecaChar == 'P')) // peão en passant
                 peaoEnPassant = resultante;
 
             // peão promovido
-            if((tabuleiro[peca[0]][peca[1]] == 'p' || tabuleiro[peca[0]][peca[1]] == 'P') && (resultante[0] == 0 || resultante[0] == 7)) {
+            if((pecaChar == 'p' || pecaChar == 'P') && (resultante[0] == 0 || resultante[0] == 7)) {
                 indicePeao[0] = peca[0];
                 indicePeao[1] = peca[1];
                 peaoPromovido[0] = resultante[0];
                 peaoPromovido[1] = resultante[1];
-            }else {
+            }else { 
                 // mudando matriz
                 if(roqueFlag == 1) {
                     tabuleiro[peca[0]][peca[1]+1] = tabuleiro[peca[0]][peca[1]+3];
@@ -87,8 +114,37 @@ public class RegrasJogo {
                     tabuleiro[peca[0]][peca[1]-4] = ' ';
                 }
 
-                tabuleiro[resultante[0]][resultante[1]] = tabuleiro[peca[0]][peca[1]];
+                tabuleiro[resultante[0]][resultante[1]] = pecaChar;
                 tabuleiro[peca[0]][peca[1]] = ' '; 
+
+                alternarJogadas = !alternarJogadas;
+                
+                // verificando vitoria ou empate
+                // casos de empate
+                if(reiAfogado(true)) {
+                    fimDeJogo = 2;
+                    return 0;
+                }
+                if(triplaRepeticao()) {
+                    fimDeJogo = 3;
+                    return 0;
+                }
+                if(materialInsuficiente()) {
+                    fimDeJogo = 4;
+                    return 0;
+                }
+                if(cinquentaLances(pecaChar)) {
+                    fimDeJogo = 5;
+                    return 0;
+                }
+
+                // caso de vitoria
+                if(xequeMate()) {
+                    if(pecaChar > 90)
+                        fimDeJogo = 0;
+                    else
+                        fimDeJogo = 1;
+                }
             }
             return 0;
         }
@@ -418,9 +474,10 @@ public class RegrasJogo {
                 break;
         }
 
-        if(pecaEscolhida != 0)  // caso pecaEscolhida == 0 significa movimento cancelado
+        if(pecaEscolhida != 0) {  // caso pecaEscolhida == 0 significa movimento cancelado
             tabuleiro[indicePeao[0]][indicePeao[1]] = ' ';
-
+            alternarJogadas = !alternarJogadas;
+        }
         // indicando que não há peão para ser promovido
         peaoPromovido[0] = -1;
         peaoPromovido[1] = -1;
@@ -446,6 +503,143 @@ public class RegrasJogo {
             }
         }
 
+        return false;
+    }
+
+    private boolean xequeMate() {
+        if(!reiAfogado(false))
+            return false;
+
+        if(!alternarJogadas) {
+            if(reiEmXeque('r'))
+                return true;
+        }else { 
+            if(reiEmXeque('R'))
+                return true;
+        }
+
+        return false;
+    }
+
+    private boolean reiAfogado(boolean testarXeque) {
+        int[] movimento = {0, 0};
+        int[] peca = {0, 0};
+
+        if(testarXeque) {
+            if(!alternarJogadas) {
+                if(reiEmXeque('r'))
+                    return false;
+            }else {
+                if(reiEmXeque('R'))
+                    return false;
+            }
+        }
+
+        for(int i = 0; i < 8; i++){
+            for(int j = 0; j< 8; j++){
+                if(!alternarJogadas) {
+                    if(tabuleiro[i][j] < 97)
+                        continue;
+                }else {
+                    if(tabuleiro[i][j] > 90 || tabuleiro[i][j] == ' ')
+                        continue;
+                }
+
+                peca[0] = i;
+                peca[1] = j;
+                for(int k = 0; k < 8; k++){
+                    for(int l = 0; l< 8; l++){
+                        if(peca[0] > k)
+                            movimento[0] = k - peca[0];
+                        else
+                            movimento[0] = k - peca[0];
+                        if(peca[1] > k)
+                            movimento[1] = l - peca[1];
+                        else
+                            movimento[1] = l - peca[1];
+
+                        if(movimentoPermitido(peca, movimento, false))
+                            return false;
+                    }
+                }
+            }
+        }
+        
+        return true;
+    }
+
+    private boolean triplaRepeticao() {
+        boolean diagramaNovo = true;
+        for(int i=0; i<historicoTabuleiro.length; i++) {
+            if(Arrays.deepEquals(historicoTabuleiro[i], tabuleiro)) {
+                diagramaNovo = false;
+                numeroDeRepeticoes[i]++;
+            }
+            if(numeroDeRepeticoes[i] == 3)
+                return true;
+        }
+        if(diagramaNovo) {
+            char[][][] auxTab = new char[historicoTabuleiro.length+1][8][8];        
+            for(int i=0; i<auxTab.length; i++) 
+                for(int j=0; j<8; j++)
+                    for(int k=0; k<8; k++)
+                        if(i<auxTab.length-1)
+                            auxTab[i][j][k] = historicoTabuleiro[i][j][k];
+                        else
+                            auxTab[i][j][k] = tabuleiro[j][k];
+
+            int[] auxNum = new int[historicoTabuleiro.length+1];
+            for(int i=0; i< numeroDeRepeticoes.length; i++)
+                auxNum[i] = numeroDeRepeticoes[i];
+            auxNum[auxNum.length-1] = 1;
+
+            historicoTabuleiro = auxTab;
+            numeroDeRepeticoes = auxNum;
+        }
+        return false;
+    }
+
+    private boolean materialInsuficiente() {
+        int numeroDePecasBrancas = 0;
+        int numeroDePecasPretas = 0;
+        for(int i=0; i<8; i++) {
+            for(int j=0; j<8; j++) {
+                if(tabuleiro[i][j] > 90) {
+                    if(tabuleiro[i][j] != 'b' && tabuleiro[i][j] != 'r' && tabuleiro[i][j] != 'c')
+                        return false;
+                    numeroDePecasBrancas++;
+                }else if(tabuleiro[i][j] != ' ') {
+                    if(tabuleiro[i][j] != 'B' && tabuleiro[i][j] != 'R' && tabuleiro[i][j] != 'C')
+                        return false;
+                    numeroDePecasPretas++;
+                }
+            }
+        }
+        if(numeroDePecasBrancas > 2 || numeroDePecasPretas > 2)
+            return false;
+        
+        return true;
+    }
+
+    private boolean cinquentaLances(char peca) {
+        
+        int numeroDePecas = 0;
+        for(int i=0; i<8; i++) {
+            for(int j=0; j<8; j++) {
+                if(tabuleiro[i][j] != ' ')
+                    numeroDePecas++;         
+            }
+        }
+        if(numeroDePecasNoTabuleiro != numeroDePecas || peca == 'P' || peca == 'p') {
+            lancesSemAtividade = 0;
+            numeroDePecasNoTabuleiro = numeroDePecas;
+        }else {
+            lancesSemAtividade += 0.5;
+        }
+        
+        if(lancesSemAtividade == 50)
+                return true;
+        
         return false;
     }
 }
