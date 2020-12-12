@@ -592,32 +592,9 @@ public class Xadrez extends javax.swing.JFrame {
                         bot.jogar();
                         if(jogo.getPeaoPromovido()[0] != -1)
                             jogo.promocao(1);
-                        somMovimento.play();
                     }
                 }
-                switch(jogo.getFimDeJogo()) {
-                    case 0:
-                        texto.setText("Vitória das peças brancas");
-                        break;
-                    case 1:
-                        texto.setText("Vitória das peças pretas");
-                        break;
-                    case 2:
-                        texto.setText("Empate por afogamento");
-                        break;
-                    case 3:
-                        texto.setText("Empate por tripla repetição");
-                        break;
-                    case 4:
-                        texto.setText("Empate por insuficiência de recursos");
-                        break;
-                    case 5:
-                        texto.setText("Empate por 50 lançes");
-                        break;
-                    case 6:
-                        texto.setText("Empate por comum acordo");
-                        break;
-                }
+                anunciarFimDeJogo();
                 
                 if(jogo.getPeaoPromovido()[0] != -1) {
                     desenharMenuPromocao(resultante, jogo.getTabuleiro()[peca[0]][peca[1]]);
@@ -697,12 +674,15 @@ public class Xadrez extends javax.swing.JFrame {
         y[0] = -1;
         desenharPecas();
         apagarMovimento();
-        if(modoPvC){
+        if(modoPvC && jogo.getFimDeJogo() == -1){
             bot.jogar();
             if(jogo.getPeaoPromovido()[0] != -1)
                 jogo.promocao(1);
             somMovimento.play();
             desenharPecas();
+        }else{
+            desenharPecas();
+            anunciarFimDeJogo();
         }
     }//GEN-LAST:event_cavaloActionPerformed
 
@@ -719,12 +699,15 @@ public class Xadrez extends javax.swing.JFrame {
         y[0] = -1;
         desenharPecas();
         apagarMovimento();
-        if(modoPvC){
+        if(modoPvC && jogo.getFimDeJogo() == -1){
             bot.jogar();
             if(jogo.getPeaoPromovido()[0] != -1)
                 jogo.promocao(1);
             somMovimento.play();
             desenharPecas();
+        }else{
+            desenharPecas();
+            anunciarFimDeJogo();
         }
     }//GEN-LAST:event_torreActionPerformed
 
@@ -740,12 +723,15 @@ public class Xadrez extends javax.swing.JFrame {
         y[0] = -1;
         desenharPecas();
         apagarMovimento();
-        if(modoPvC){
+        if(modoPvC && jogo.getFimDeJogo() == -1){
             bot.jogar();
             if(jogo.getPeaoPromovido()[0] != -1)
                 jogo.promocao(1);
             somMovimento.play();
             desenharPecas();
+        }else{
+            desenharPecas();
+            anunciarFimDeJogo();
         }
     }//GEN-LAST:event_rainhaActionPerformed
 
@@ -795,12 +781,15 @@ public class Xadrez extends javax.swing.JFrame {
         y[0] = -1;
         desenharPecas();
         apagarMovimento();
-        if(modoPvC){
+        if(modoPvC && jogo.getFimDeJogo() == -1){
             bot.jogar();
             if(jogo.getPeaoPromovido()[0] != -1)
                 jogo.promocao(1);
             somMovimento.play();
             desenharPecas();
+        }else{
+            desenharPecas();
+            anunciarFimDeJogo();
         }
     }//GEN-LAST:event_bispoActionPerformed
 
@@ -915,6 +904,32 @@ public class Xadrez extends javax.swing.JFrame {
     private void apagarMovimento() {
         for(int i=0; i<35; i++) {
             movimentos[i].setVisible(false);
+        }
+    }
+    
+    private void anunciarFimDeJogo() {
+        switch(jogo.getFimDeJogo()) {
+            case 0:
+                texto.setText("Vitória das peças brancas");
+                break;
+            case 1:
+                texto.setText("Vitória das peças pretas");
+                break;
+            case 2:
+                texto.setText("Empate por afogamento");
+                break;
+            case 3:
+                texto.setText("Empate por tripla repetição");
+                break;
+            case 4:
+                texto.setText("Empate por insuficiência de recursos");
+                break;
+            case 5:
+                texto.setText("Empate por 50 lançes");
+                break;
+            case 6:
+                texto.setText("Empate por comum acordo");
+                break;
         }
     }
     

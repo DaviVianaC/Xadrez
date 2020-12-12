@@ -481,10 +481,27 @@ public class RegrasJogo {
         if(pecaEscolhida != 0) {  // caso pecaEscolhida == 0 significa movimento cancelado
             tabuleiro[indicePeao[0]][indicePeao[1]] = ' ';
             alternarJogadas = !alternarJogadas;
+            if(reiAfogado(true)) {
+                fimDeJogo = 2;
+            }
+            if(triplaRepeticao()) {
+                fimDeJogo = 3;
+            }
+            if(materialInsuficiente()) {
+                fimDeJogo = 4;
+            }
+            if(xequeMate()) {
+                if(alternarJogadas)
+                    fimDeJogo = 0;
+                else
+                    fimDeJogo = 1;
+            }
         }
         // indicando que não há peão para ser promovido
         peaoPromovido[0] = -1;
         peaoPromovido[1] = -1;
+        
+        
     }
 
     private boolean enPassantValido(int[] peca, int[] resultante) {
